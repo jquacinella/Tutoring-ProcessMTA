@@ -228,9 +228,9 @@ plt.xticks(np.arange(0, len(sortedEveningValues), 1), labelsEvenings, rotation='
 plt.xlabel("Station")
 plt.ylabel("Evening Avg")
 plt.title("Avg Weekday Evening Entries per MTA Station")
-mng = plt.get_current_fig_manager()
-mng.resize(*mng.window.maxsize())
-plt.savefig('evening-entries.png')
+# mng = plt.get_current_fig_manager()
+# mng.resize(*mng.window.maxsize())
+# plt.savefig('evening-entries.png')
 plt.close()
 
 
@@ -258,7 +258,43 @@ plt.xticks(np.arange(0, len(sortedMorningValues), 1), labelsMornings, rotation='
 plt.xlabel("Station")
 plt.ylabel("Log of the Morning Avg")
 plt.title("Avg Weekday (Log) Morning Exits per MTA Station")
-mng = plt.get_current_fig_manager()
-mng.resize(*mng.window.maxsize())
-plt.savefig('morning-exits.png')
+# mng = plt.get_current_fig_manager()
+# mng.resize(*mng.window.maxsize())
+# plt.savefig('morning-exits.png')
+plt.close()
+
+
+
+
+
+
+
+
+### Morning
+
+# Generate a list of tuples of x, y values, where x = station name and y = weekday morning avg
+totalValues = [ ("%s-%s-%s" % key,  math.log(dataPerStationAvgs[key]["morningAvg"] + dataPerStationAvgs[key]["eveningAvg"])) for key in dataPerStationAvgs if dataPerStationAvgs[key]["totalAvg"] > 0]
+
+# Sort them by average
+sortedTotalValues = sorted(totalValues, key=lambda tup: tup[1], reverse=True)
+
+# Generate x axis labels, which are station names
+# (in this case we print every other 5 stations for readability)
+labelsMornings = []
+for idx, x in enumerate(sortedTotalValues):
+    if idx % 5 == 0:
+        labelsMornings.append(x[0].split('-')[-1])
+    else:
+        labelsMornings.append('')
+
+# Generate a bar plot, resize to maximum, save and close
+fig, ax = plt.subplots()
+rects1 = ax.bar(np.arange(len(sortedTotalValues)), [x[1] for x in sortedTotalValues], .5, color='r')
+plt.xticks(np.arange(0, len(sortedTotalValues), 1), labelsMornings, rotation='vertical', fontsize=8 )
+plt.xlabel("Station")
+plt.ylabel("Log of the Total Avg")
+plt.title("Avg Weekday (Log) Totals per MTA Station")
+# mng = plt.get_current_fig_manager()
+# mng.resize(*mng.window.maxsize())
+plt.savefig('total-exits.png')
 plt.close()
